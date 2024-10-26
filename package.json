@@ -1,0 +1,17 @@
+{
+  "name": "bun-trd",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "hono": "^4.6.7"
+  }
+}
