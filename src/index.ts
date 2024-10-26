@@ -1,6 +1,6 @@
 import './utils/db';
 import { Hono } from "hono";
-import { userCreate} from './controllers/usersController';
+import { userCreate, userLogin } from './controllers/usersController';
 
 const app = new Hono();
 
@@ -11,6 +11,7 @@ app.get("/", (c) => {
 
 //Partie utilisateur
 app.post("/user", ...userCreate);
+app.post("/login", ...userLogin);
 
 //https://hono.dev/docs/getting-started/bun
 //https://bun.sh/guides/runtime/read-env
