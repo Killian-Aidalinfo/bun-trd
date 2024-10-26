@@ -1,6 +1,9 @@
 import { Database } from "bun:sqlite";
 //Connexion à la base de données (La création est faite si elle n'existe pas)
-export const db = new Database("data/trd.sqlite", { create: true });
+export const db =
+  Bun.env.NODE_ENV === "test"
+    ? new Database("data/trd_test.sqlite", { create: true })
+    : new Database("data/trd.sqlite", { create: true });
 
 //Création de la table utilisateur par défaut
 db.run(`

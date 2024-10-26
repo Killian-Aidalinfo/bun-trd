@@ -77,7 +77,8 @@ export const userCreate = factory.createHandlers(async (c) => {
 // Login utilisateur
 import { sign } from "hono/jwt";
 //Fonction de login de l'utilisateur
-export async function fonctionUserLogin(userInput: userInput) {
+export async function fonctionUserLogin(userInput: Pick<userInput, "email" | "password">) {
+  //Pick permet de sélectionner juste les champs d'entrée voulus de userInput
   //Vérification des champs obligatoires
   if (!userInput.email || !userInput.password) {
     throw new HTTPException(400, {
