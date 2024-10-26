@@ -76,7 +76,7 @@ export const userCreate = factory.createHandlers(async (c) => {
 
 // Login utilisateur
 import { sign } from "hono/jwt";
-
+//Fonction de login de l'utilisateur
 export async function fonctionUserLogin(userInput: userInput) {
   //Vérification des champs obligatoires
   if (!userInput.email || !userInput.password) {
@@ -84,26 +84,34 @@ export async function fonctionUserLogin(userInput: userInput) {
       message: "Tous les champs sont obligatoires",
     });
   }
+  //Requete dans la base de données pour récupérer l'utilisateur
   const user = db
     .query("SELECT * FROM users WHERE email = ?")
-    .get(userInput.email) as user;
-
+    .get(userInput.email) as user; //Nécessite as user en TS pour typé le résultat de la query
+  //Erreur si l'utilisateur n'existe pas
+  if(!user){
+    throw new HTTPException(400, { message: "Utilisateur inexistant" });
+  }
+  //Vérification du password
+  //https://bun.sh/guides/util/hash-a-password
   const isMatch = await Bun.password.verify(userInput.password, user.password);
-
+  //Vérification si le password signé correspond
   if (!isMatch) {
     throw new HTTPException(400, { message: "Mot de passe incorrect" });
   }
+  //Création du payload pour le token
   const payload = {
     id: user.id,
     exp: Math.floor(Date.now() / 1000) + 60 * 60, // Expiration dans 60 minutes
   };
-
-  const secret = Bun.env.JWT_SECRET as string;
+  //Récupération du secret JWT dans le .env
+  const secret = Bun.env.JWT_SECRET as string; // nécessite as string et le if pour éviter une erreur undefined à la signature du token
   if (!secret) {
     throw new Error(
       "JWT_SECRET n'est pas défini dans les variables d'environnement."
     );
   }
+  // Création du token
   const token = await sign(payload, secret);
   return token;
 }
@@ -111,6 +119,6 @@ export async function fonctionUserLogin(userInput: userInput) {
 export const userLogin = factory.createHandlers(async (c) => {
   // Récupéreration des donnée de la requête
   const userInput = await c.req.json<userInput>();
-  const message = await fonctionUserLogin(userInput);
-  return c.text(message);
+  const result = await fonctionUserLogin(userInput);
+  return c.text(result);
 });
