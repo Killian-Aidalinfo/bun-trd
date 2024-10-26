@@ -4,8 +4,9 @@ import { describe, expect, test, jest } from "bun:test";
 import { fonctionUserCreate, fonctionUserLogin } from "../src/controllers/usersController";
 // Import de l'exception HTTP
 import { HTTPException } from "hono/http-exception";
-// Import de la db pour mock la méthode db.run
+// Import de la db vider les données de la base de données
 import { db } from "../src/utils/db";
+import { verify } from "hono/jwt";
 
 //Récupération des tables de la base de données
 const tables = db.query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';").all() as { name: string }[];
@@ -66,10 +67,13 @@ let loginInput = {
 
 // Tests de la fonction fonctionUserLogin
 describe("Tests de la fonction fonctionUserLogin", () => {
-  test("Connexion réussie avec les bonnes informations", async () => {
+  test("Connexion réussie", async () => {
     const token = await fonctionUserLogin(loginInput);
     expect(token).toBeDefined();
-    expect(typeof token).toBe("string");
+    // Décodage et vérification du token
+    const payload = await verify(token, Bun.env.JWT_SECRET as string);
+    expect(payload).toHaveProperty("id" && "exp");   
+    //https://jestjs.io/docs/expect#tohavepropertykeypath-value
   });
 
   test("Échec de connexion avec un mot de passe incorrect", async () => {

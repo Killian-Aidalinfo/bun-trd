@@ -105,15 +105,8 @@ export async function fonctionUserLogin(userInput: Pick<userInput, "email" | "pa
     id: user.id,
     exp: Math.floor(Date.now() / 1000) + 60 * 60, // Expiration dans 60 minutes
   };
-  //Récupération du secret JWT dans le .env
-  const secret = Bun.env.JWT_SECRET as string; // nécessite as string et le if pour éviter une erreur undefined à la signature du token
-  if (!secret) {
-    throw new Error(
-      "JWT_SECRET n'est pas défini dans les variables d'environnement."
-    );
-  }
   // Création du token
-  const token = await sign(payload, secret);
+  const token = await sign(payload, Bun.env.JWT_SECRET as string);
   return token;
 }
 
