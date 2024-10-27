@@ -1,6 +1,7 @@
 import './utils/db';
 import { Hono } from "hono";
 import { userCreate, userLogin } from './controllers/usersController';
+import { viewMatch } from './controllers/matchController';
 
 const app = new Hono();
 
@@ -12,7 +13,7 @@ app.get("/", (c) => {
 //Partie utilisateur
 app.post("/user", ...userCreate);
 app.post("/login", ...userLogin);
-
+app.get("/matchs", ...viewMatch);
 //https://hono.dev/docs/getting-started/bun
 //https://bun.sh/guides/runtime/read-env
 export default {

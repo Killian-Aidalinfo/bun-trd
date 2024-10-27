@@ -1,5 +1,5 @@
 //Import des class de test via bun:test
-import { describe, expect, test, jest } from "bun:test";
+import { describe, expect, test } from "bun:test";
 //Récupération de la fonction à tester
 import { fonctionUserCreate, fonctionUserLogin } from "../src/controllers/usersController";
 // Import de l'exception HTTP
